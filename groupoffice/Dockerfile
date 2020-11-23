@@ -10,7 +10,7 @@ VOLUME /usr/local/share/src
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Install small text editor to make config.php changes, install wget for composer
-RUN apt-get install -y nano wget
+RUN apt-get update && apt-get install -y nano wget
 
 COPY ./etc/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
@@ -24,6 +24,7 @@ RUN sed -i "s/output_buffering = 4096/output_buffering = off/" /usr/local/etc/ph
 COPY ./usr/local/sbin/install-composer.sh /usr/local/sbin/install-composer.sh
 RUN chmod 700 /usr/local/sbin/install-composer.sh
 RUN /usr/local/sbin/install-composer.sh
+RUN mv composer.phar /usr/local/bin/composer
 
 # For supporting host.docker.internal on Linux. See https://github.com/docker/for-linux/issues/264
 RUN apt-get install -y iproute2 host
