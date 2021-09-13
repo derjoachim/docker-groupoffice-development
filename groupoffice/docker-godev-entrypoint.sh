@@ -20,7 +20,7 @@ fi
 if [ ! -d "/usr/local/share/src/www/vendor" ]; then
   echo "Running composer install for PHP"
   cd /usr/local/share/src/www
-  composer install -a
+  composer install -o
 fi
 
 echo "Calling original with $@"
