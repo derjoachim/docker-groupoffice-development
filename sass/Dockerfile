@@ -1,9 +1,11 @@
 FROM debian:buster-slim
 
-RUN apt-get update
-RUN apt-get install -y npm
+RUN apt-get update && apt-get install -y curl
 
-RUN npm install -g sass
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+
+RUN apt-get update && apt-get install -y nodejs
+RUN npm install npm -g && npm install -g sass
 
 VOLUME /src
 
