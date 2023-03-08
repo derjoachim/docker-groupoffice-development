@@ -13,6 +13,10 @@ else
     echo "host.docker.internal already defined"
 fi
 
+#echo "Map www-data to UID 1000 and GID 1000"
+usermod -u 1000 www-data
+groupmod -g 1000 www-data
+
 if [ ! -d "/usr/local/share/src/www/vendor" ]; then
   echo "Running composer install for PHP"
   cd /usr/local/share/src/www
