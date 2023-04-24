@@ -4,6 +4,7 @@ services:
   groupoffice:
     build:
       context: ./groupoffice
+      dockerfile: sixseven.Dockerfile
     restart: always
     ports:
       - "8080:80"
@@ -36,6 +37,7 @@ services:
       - "8306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: groupoffice
+      MARIADB_AUTO_UPGRADE: 1
     env_file:
       - ./db.env     
 

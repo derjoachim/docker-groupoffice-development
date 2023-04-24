@@ -1,11 +1,12 @@
-FROM debian:buster-slim
+FROM google/dart
 
-RUN apt-get update && apt-get install -y curl
+ARG DART_SASS_VERSION=1.60.0
+ARG DART_SASS_TAR=dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz
+ARG DART_SASS_URL=https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/${DART_SASS_TAR}
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-
-RUN apt-get update && apt-get install -y nodejs
-RUN npm install npm -g && npm install -g sass
+ADD ${DART_SASS_URL} /opt/
+RUN cd /opt/ && tar -xzf ${DART_SASS_TAR} && rm ${DART_SASS_TAR}
+WORKDIR /opt/dart-sass
 
 VOLUME /src
 
