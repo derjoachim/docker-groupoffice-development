@@ -1,4 +1,4 @@
-FROM groupoffice:testing
+FROM intermesh/groupoffice:6.8
 
 RUN rm -rf /usr/local/share/groupoffice
 RUN ln -s /usr/local/share/src/www /usr/local/share/groupoffice
