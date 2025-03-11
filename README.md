@@ -6,9 +6,10 @@ It will install these services:
 
 1. mariadb
 2. mailserver based on dovecot and postfix
-3. groupoffice apache web server with php 7.3, ioncube, composer and xdebug running on port 8080
+3. groupoffice Apache web server with PHP, Composer and xdebug running on port 8080
 4. phpunit for testing
 5. sass container that will watch and compile sass files for you.
+6. Libretranslate to help translators with machine translations.
 
 Installation
 ------------
@@ -107,6 +108,22 @@ If you'd like to open a shell inside the container then you can run:
 docker compose exec groupoffice bash
 ```
 
+Translating
+-----------
+Make sure the development tools module is installed.
+
+Run this command to export language. LibreTranslate runs locally and
+will be used to machine translate the missing string:
+
+```
+docker compose exec groupoffice php www/cli.php community/dev/Language/export --language=nl --translate --missingOnly | tee nl-missing.csv
+```
+
+Import language file:
+```
+docker compose exec groupoffice php www/cli.php community/dev/Language/import --path=lang.csv
+```
+
 Useful commands
 ---------------
 Run composer:
@@ -123,12 +140,6 @@ Run cron:
 
 ```bash
 docker compose exec --user www-data groupoffice php ./www/cron.php
-```
-
-Import language file:
-
-```
-docker compose exec groupoffice php www/cli.php community/dev/Language/import --path=lang.csv
 ```
 
 Upgrade:
