@@ -175,6 +175,13 @@ Login to the mariadb server as root:
 mariadb -u root -p
 ```
 
+If you have newly built your Docker environment, you may update privileges for the 'groupoffice' user:
+
+```sql
+GRANT ALL PRIVILEGENS ON *.* to 'groupoffice'@localhost;
+FLUSH PRIVILEGES;
+```
+
 To ease development you can login without a password if you run this query:
 
 ```sql
