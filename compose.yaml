@@ -3,7 +3,7 @@ services:
   groupoffice:
     build:
       context: ./groupoffice
-      dockerfile: sixeight.Dockerfile
+      dockerfile: twentyfivezero.Dockerfile
     restart: always
     ports:
       - "8080:80"
@@ -28,6 +28,8 @@ services:
       PHP_IDE_CONFIG: "serverName=localhost" #for PHPStorm path mappings in Preferences -> PHP -> Servers
 
     working_dir: /usr/local/share/src
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   db:
     image: mariadb:11.5.2
@@ -78,21 +80,6 @@ services:
     volumes:
       - ./src:/src
     working_dir: /src
-
-  # Used for translators
-  # docker compose exec groupoffice php www/cli.php community/dev/Language/export --language=nl --translate --missingOnly
-  libretranslate:
-    image: libretranslate/libretranslate
-    # To force model update
-    #command: --load-only en,nl,de,fr,es --port 5010 --threads 8 --update-models
-    command: --load-only en,nl,de,fr,es --port 5010 --threads 16
-    tty: true
-    restart:
-      unless-stopped
-    ports:
-      - 5010:5010
-    volumes:
-      - lt-local:/home/libretranslate/.local
 
 volumes:
   godata:

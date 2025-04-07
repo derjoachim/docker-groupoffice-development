@@ -1,4 +1,3 @@
-version: "3.6"
 services:
   groupoffice:
     ports:
@@ -9,82 +8,35 @@ services:
       # for profiling set and enable the bind mount above:
       #XDEBUG_MODE: "profile"
 
-  groupoffice-63:
+  groupoffice-68:
     build:
       context: ./groupoffice
       dockerfile: sixsix.Dockerfile
     restart: always
     ports:
-      - "63:443"
-      - "6380:80"
+      - "68:443"
+      - "6880:80"
     links:
       - db
     volumes:
       - /Volumes/Projects/docker-groupoffice-development/src/63:/usr/local/share/src:delegated
-      - "godata_63:/var/lib/groupoffice"
-      - "goetc_63:/etc/groupoffice/multi_instance"
+      - "godata_68:/var/lib/groupoffice"
+      - "goetc_68:/etc/groupoffice/multi_instance"
       - ./groupoffice/etc/groupoffice/globalconfig.inc.php:/etc/groupoffice/globalconfig.inc.php:delegated
     env_file:
       - ./db.env
     environment:
-      MYSQL_DATABASE: groupoffice_63
+      MYSQL_DATABASE: groupoffice_68
       PHP_IDE_CONFIG: "serverName=localhost" #for PHPStorm path mappings in Preferences -> PHP -> Servers
 
     working_dir: /usr/local/share/src
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
-  groupoffice-64:
-    build:
-      context: ./groupoffice
-      dockerfile: sixsix.Dockerfile
-    restart: always
-    ports:
-      - "6443:443"
-      - "6480:80"
-      - "80:80"
 
-    links:
-      - db
-    volumes:
-      - /Volumes/Projects/docker-groupoffice-development/src/64:/usr/local/share/src:delegated
-      - "godata_64:/var/lib/groupoffice"
-      - "webgrind:/tmp/webgrind"
-      - "goetc_64:/etc/groupoffice/multi_instance"
-      - ./groupoffice/etc/groupoffice/globalconfig.inc.php:/etc/groupoffice/globalconfig.inc.php:delegated
-      - lo_config_volume:/etc/loolwsd
-    env_file:
-      - ./db.env
-    environment:
-      XDEBUG_CONFIG: "profiler_output_dir=/tmp/webgrind"
-      MYSQL_DATABASE: groupoffice_64
-      PHP_IDE_CONFIG: "serverName=localhost" #for PHPStorm path mappings in Preferences -> PHP -> Servers
-    working_dir: /usr/local/share/src
-    
-  groupoffice-65:
-    build:
-      context: ./groupoffice
-      dockerfile: sixsix.Dockerfile
-    restart: always
-    ports:
-      - "6543:443"
-      - "6580:80"
-    links:
-      - db
-    volumes:
-      - /Volumes/Projects/docker-groupoffice-development/src/65:/usr/local/share/src:delegated
-      - "godata_65:/var/lib/groupoffice"
-      - "webgrind:/tmp/webgrind"
-      - "goetc_65:/etc/groupoffice/multi_instance"
-      - ./groupoffice/etc/groupoffice/globalconfig.inc.php:/etc/groupoffice/globalconfig.inc.php:delegated
-      - lo_config_volume:/etc/loolwsd
-    env_file:
-      - ./db.env
-    environment:
-      XDEBUG_CONFIG: "profiler_output_dir=/tmp/webgrind"
-      MYSQL_DATABASE: groupoffice_65
-      PHP_IDE_CONFIG: "serverName=localhost" #for PHPStorm path mappings in Preferences -> PHP -> Servers
-    working_dir: /usr/local/share/src
 
-  #Discovery URL: http://host.docker.internal:9980
+  # Discovery URL: http://host.docker.internal:9980
+  # On Linux you have to add host.docker.internal to /etc/hosts
   libreoffice:
     image: libreoffice/online:master
     environment:
@@ -101,11 +53,12 @@ services:
       - "9980:9980"
     restart:
       unless-stopped
-#    # Enable on linux and replace your IP address with your host IP
-#    extra-hosts:
-#      - "host.docker.internal:192.168.1.?"
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
-
+  # Use http://host.docker.internal:9080 in Group-Office as OnlyOffice server URL
+  # only works when accessing GO on host.docker.internal
+  # On Linux you have to add host.docker.internal to /etc/hosts
   onlyoffice:
     image: onlyoffice/documentserver
     ports:
@@ -209,28 +162,25 @@ services:
 #      - 8003:80
 
 # Can be used for automatic translations
-
-#  libretranslate:
-#    image: libretranslate/libretranslate
-#    command: --load-only en,nl --port 5010 --threads 8
-#    tty: true
-#    restart:
-#      unless-stopped
-#    ports:
-#      - 5010:5010
-#    volumes:
-#      - lt-local:/home/libretranslate/.local
+# docker compose exec groupoffice php www/cli.php community/dev/Language/export --language=nl --translate --missingOnly
+# libretranslate:
+#  image: libretranslate/libretranslate
+#  # To force model update
+#  #command: --load-only en,nl,de,fr,es --port 5010 --threads 8 --update-models
+#  command: --load-only en,nl,de,fr,es --port 5010 --threads 16
+#  tty: true
+#  restart:
+#    unless-stopped
+#  ports:
+#    - 5010:5010
+#  volumes:
+#    - lt-local:/home/libretranslate/.local
 
       
 volumes:
   lo_config_volume:
-  godata_65:
-  goetc_65:
 
-  godata_64:
-  goetc_64:
-
-  godata_63:
-  goetc_63:
+  godata_68:
+  goetc_68:
 
   mysqldata:

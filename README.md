@@ -126,6 +126,12 @@ docker compose exec groupoffice php www/cli.php community/dev/Language/import --
 
 Useful commands
 ---------------
+
+Build SASS, GOUI Typescript modules and install composer packages:
+```bash
+docker compose exec groupoffice ./scripts/build.sh
+```
+
 Run composer:
 ```bash
 docker compose exec -w /usr/local/share/src/www groupoffice composer update -o
@@ -145,4 +151,38 @@ docker compose exec --user www-data groupoffice php ./www/cron.php
 Upgrade:
 ```
 docker compose exec -u www-data groupoffice ./www/cli.php core/System/upgrade
+```
+
+Watch debug.log file:
+```shell
+docker compose exec groupoffice  tail -f /var/lib/groupoffice/log/debug.log
+```
+
+
+Database access
+---------------
+You can connect from the host at port 8306 by default.
+
+To enter the mariaDB container run:
+
+```shell
+docker compose exec db bash
+```
+
+Login to the mariadb server as root:
+
+```shell
+mariadb -u root -p
+```
+
+To ease development you can login without a password if you run this query:
+
+```sql
+grant all privileges on *.* to root@localhost identified via unix_socket;
+```
+
+Now you can enter the mariadb server by running:
+
+```shell
+docker compose exec db mariadb
 ```
