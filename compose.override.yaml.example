@@ -1,5 +1,8 @@
 services:
   groupoffice:
+    build:
+        context: ./groupoffice
+        dockerfile: testing.Dockerfile
     ports: !override
       - "80:80"
       - "443:443"
@@ -9,26 +12,25 @@ services:
       #XDEBUG_MODE: "profile"
 
   # Example of running another version next to the master branch. Duplicate this and the volumes below to create more versions,
-  groupoffice-68:
+  groupoffice-250:
     build:
       context: ./groupoffice
-      dockerfile: sixsix.Dockerfile
+      dockerfile: twentyfivezero.Dockerfile
     restart: always
     ports:
-      - "68:443"
-      - "6880:80"
+      - "8250:80"
     links:
       - db
     volumes:
       - /Volumes/Projects/docker-groupoffice-development/src/63:/usr/local/share/src:delegated
-      - "godata_68:/var/lib/groupoffice"
-      - "goetc_68:/etc/groupoffice/multi_instance"
+      - "godata_250:/var/lib/groupoffice"
+      - "goetc_250:/etc/groupoffice/multi_instance"
       - ./groupoffice/etc/groupoffice/globalconfig.inc.php:/etc/groupoffice/globalconfig.inc.php:delegated
     env_file:
       - ./db.env
     environment:
       MYSQL_USER: root
-      MYSQL_DATABASE: groupoffice_68
+      MYSQL_DATABASE: groupoffice_250
       PHP_IDE_CONFIG: "serverName=localhost" #for PHPStorm path mappings in Preferences -> PHP -> Servers
 
     working_dir: /usr/local/share/src
@@ -39,18 +41,17 @@ services:
 
   # Discovery URL: http://host.docker.internal:9980
   # On Linux you have to add host.docker.internal to /etc/hosts
-  libreoffice:
-    image: libreoffice/online:master
+  collabora:
+    image: collabora/code
     environment:
       domain: (.*\.group-office\.com|host\.docker\.internal|.*\.groupoffice\.net|172\.18\.0\.1)
       username: admin
       password: adminadmin
       extra_params: --o:ssl.enable=false
-      DONT_GEN_SSL_CERT: 1
     volumes:
       - lo_config_volume:/etc/loolwsd
     cap_add:
-      - MKNOD
+      - SYS_ADMIN
     ports:
       - "9980:9980"
     restart:
@@ -137,24 +138,26 @@ services:
 
 # Can be used for automatic translations
 # docker compose exec groupoffice php www/cli.php community/dev/Language/export --language=nl --translate --missingOnly
-# libretranslate:
-#  image: libretranslate/libretranslate
-#  # To force model update
-#  #command: --load-only en,nl,de,fr,es --port 5010 --threads 8 --update-models
-#  command: --load-only en,nl,de,fr,es --port 5010 --threads 16
-#  tty: true
-#  restart:
-#    unless-stopped
-#  ports:
-#    - 5010:5010
-#  volumes:
-#    - lt-local:/home/libretranslate/.local
+#  libretranslate:
+#    image: libretranslate/libretranslate
+#    environment:
+#       #- LT_UPDATE_MODELS=true
+#       - LT_LOAD_ONLY=en,cs,nl,de,fr,es
+#       - LT_THREADS=16
+#       - LT_PORT=5010
+#    tty: true
+#    restart:
+#      unless-stopped
+#    ports:
+#      - 5010:5010
+#    volumes:
+#      - lt-local:/home/libretranslate/.local
 
       
 volumes:
 #  lo_config_volume:
 
-  godata_68:
-  goetc_68:
+  godata_250:
+  goetc_250:
 
 #  mysqldata:
