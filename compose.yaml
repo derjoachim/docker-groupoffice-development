@@ -3,7 +3,7 @@ services:
   groupoffice:
     build:
       context: ./groupoffice
-      dockerfile: twentyfivezero.Dockerfile
+      dockerfile: twentysixzero.Dockerfile
     restart: always
     ports:
       - "8080:80"
@@ -11,7 +11,7 @@ services:
       - "db"
 
     volumes:
-      - ./src/master:/usr/local/share/src:delegated 
+      - ./src/master:/usr/local/share/src:delegated
       - godata:/var/lib/groupoffice:delegated
       - ./profile:/tmp/profile:delegated
       - goetc:/etc/groupoffice/multi_instance:delegated
@@ -19,10 +19,10 @@ services:
       - ~/Downloads:/root/Downloads
       #- ./ssl:/etc/ssl/groupoffice:delegated
     env_file:
-      - ./db.env     
+      - ./db.env
     environment:
       # for profiling set and enable the bind mount above:
-#      XDEBUG_MODE: "profile"
+      #      XDEBUG_MODE: "profile"
 
       MYSQL_DATABASE: groupoffice
       PHP_IDE_CONFIG: "serverName=localhost" #for PHPStorm path mappings in Preferences -> PHP -> Servers
@@ -33,26 +33,27 @@ services:
 
   db:
     image: mariadb:10.11
-    restart: always   
+    restart: always
     ports:
       - "8306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: groupoffice
       MARIADB_AUTO_UPGRADE: 1
     env_file:
-      - ./db.env     
+      - ./db.env
 
     volumes:
       - dbdata:/var/lib/mysql:delegated
+      - ./db/etc/mysql/mariadb.conf.d/51-groupoffice.cnf:/etc/mysql/mariadb.conf.d/51-groupoffice.cnf
       - ~/Downloads:/root/Downloads:delegated # Useful for importing large dump files
-      
+
   mailserver:
     image: intermesh/groupoffice-mailserver:latest
     ## When using local builds for testing:
     #build:
     #   context: ../docker-groupoffice-mailserver
     restart: always
-    ports: 
+    ports:
       - "143:143"
       - "4190:4190"
       - "25:25"
